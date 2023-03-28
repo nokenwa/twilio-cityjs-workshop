@@ -25,8 +25,6 @@ app.use(
 );
 
 app.get("/", (req, res) => {
-  console.log(req.headers["user-agent"]);
-  console.log("hello");
   res.sendFile(path.join(__dirname, "/public/index.html"));
 });
 
@@ -39,6 +37,13 @@ app.post("/", (req, res) => {
 
 app.get("/2fa", (req, res) => {
   res.sendFile(path.join(__dirname, "/public/2fa.html"));
+});
+
+app.get("/secrets", (req, res) => {
+  console.log(req.session);
+  if (req.session.loggedIn) {
+    res.send("Here are all the secrets");
+  } else res.sendStatus(401);
 });
 
 app.post("/start-verify", async (req, res) => {

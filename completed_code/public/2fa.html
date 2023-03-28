@@ -191,12 +191,12 @@
       emailInputDiv.style.display = "none";
     }
 
-    const statusSpan = document.getElementById("status");
-    const modalStatusSpan = document.getElementById("modal-status");
+    const status = document.getElementById("status");
+    const modalstatus = document.getElementById("modal-status");
 
     function showModalStatus(message, options = { color: "gray" }) {
-      modalStatusSpan.style.color = options.color;
-      modalStatusSpan.textContent = message;
+      modalstatus.style.color = options.color;
+      modalstatus.textContent = message;
     }
 
     function showError(error) {
@@ -205,13 +205,13 @@
     }
 
     function showStatus(message, options = { color: "gray" }) {
-      statusSpan.style.color = options.color;
-      statusSpan.textContent = message;
+      status.style.color = options.color;
+      status.textContent = message;
     }
 
     function clearStatus() {
-      statusSpan.textContent = "";
-      modalStatusSpan.textContent = "";
+      status.textContent = "";
+      modalstatus.textContent = "";
     }
 
     const modal = document.getElementById("otp-modal");
@@ -219,7 +219,7 @@
 
     async function sendOtp(event) {
       event.preventDefault();
-
+      console.log("sendingOtp");
       const locale = document.getElementById("select-language").value;
       const channel = selectedChannel();
 
@@ -244,7 +244,7 @@
         });
 
         const json = await response.json();
-
+        console.log(json);
         if (response.status == 429) {
           clearStatus();
           modal.style.display = "block";
@@ -295,7 +295,8 @@
           showModalStatus("Verification success!", { color: "green" });
           code.value = "";
         } else {
-          showModalStatus("Incorrect token!", { color: "#a94442" });
+          console.log(json.body);
+          showModalStatus(`${json.body.message}`, { color: "#a94442" });
           code.value = "";
         }
       } catch (error) {
@@ -392,7 +393,6 @@
       document.getElementById("status").textContent = "";
       document.getElementById("reset").innerHTML = "";
       document.getElementById("retry").style.display = "none";
-      document.getElementById("call").style.display = "none";
     }
 
     function retrySend(event) {

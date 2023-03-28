@@ -47,24 +47,7 @@ app.get("/secrets", (req, res) => {
 });
 
 app.post("/start-verify", async (req, res) => {
-  const { channel, locale, to } = req.body;
   try {
-    if (channel === "sms" || "call") {
-      const resp = await twilio.lookups.v2
-        .phoneNumbers(to)
-        .fetch({ fields: "line_type_intelligence" });
-      console.log(resp);
-      if (resp.lineTypeIntelligence === ("premium" || "sharedCost")) {
-        throw new Error("We do not support premium phone numbers for 2FA");
-      }
-    }
-    const verification = await twilio.verify.v2
-      .services(process.env.VERIFY_SERVICE_SID)
-      .verifications.create({
-        to,
-        channel,
-        locale,
-      });
     res.json({ success: true, attempts: verification.sendCodeAttempts.length });
   } catch (error) {
     console.error(error);
@@ -76,23 +59,8 @@ app.post("/start-verify", async (req, res) => {
 app.post("/check-verify", async (req, res) => {
   const { to, code } = req.body;
   try {
-    const check = await twilio.verify.v2
-      .services(process.env.VERIFY_SERVICE_SID)
-      .verificationChecks.create({
-        to,
-        code,
-      });
-
-    if (check.status === "approved") {
-      req.session.loggedIn = true;
-      console.log(req.session);
-      res.json({ success: true, message: "Verification Success" });
-    } else {
-      res.json({
-        success: false,
-        message: `Verification Unsuccessful: ${check.status}`,
-      });
-    }
+    req.session.loggedIn = true;
+    res.json({ success: true, message: "Verification Success" });
   } catch (error) {
     console.error(error);
     res.sendStatus(400);

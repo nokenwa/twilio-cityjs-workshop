@@ -191,12 +191,12 @@
       emailInputDiv.style.display = "none";
     }
 
-    const status = document.getElementById("status");
-    const modalstatus = document.getElementById("modal-status");
+    const statusSpan = document.getElementById("status");
+    const modalStatusSpan = document.getElementById("modal-status");
 
     function showModalStatus(message, options = { color: "gray" }) {
-      modalstatus.style.color = options.color;
-      modalstatus.textContent = message;
+      modalStatusSpan.style.color = options.color;
+      modalStatusSpan.textContent = message;
     }
 
     function showError(error) {
@@ -205,13 +205,13 @@
     }
 
     function showStatus(message, options = { color: "gray" }) {
-      status.style.color = options.color;
-      status.textContent = message;
+      statusSpan.style.color = options.color;
+      statusSpan.textContent = message;
     }
 
     function clearStatus() {
-      status.textContent = "";
-      modalstatus.textContent = "";
+      statusSpan.textContent = "";
+      modalStatusSpan.textContent = "";
     }
 
     const modal = document.getElementById("otp-modal");
@@ -295,8 +295,7 @@
           showModalStatus("Verification success!", { color: "green" });
           code.value = "";
         } else {
-          console.log(json.body);
-          showModalStatus(`${json.body.message}`, { color: "#a94442" });
+          showModalStatus("Incorrect token!", { color: "#a94442" });
           code.value = "";
         }
       } catch (error) {
@@ -393,6 +392,7 @@
       document.getElementById("status").textContent = "";
       document.getElementById("reset").innerHTML = "";
       document.getElementById("retry").style.display = "none";
+      document.getElementById("call").style.display = "none";
     }
 
     function retrySend(event) {

@@ -25,6 +25,8 @@ app.use(
 );
 
 app.get("/", (req, res) => {
+  console.log(req.headers["user-agent"]);
+  console.log("hello");
   res.sendFile(path.join(__dirname, "/public/index.html"));
 });
 
@@ -46,8 +48,8 @@ app.post("/start-verify", async (req, res) => {
       const resp = await twilio.lookups.v2
         .phoneNumbers(to)
         .fetch({ fields: "line_type_intelligence" });
-      console.log(resp);
-      if (resp.lineTypeIntelligence === ("premium" || "sharedCost")) {
+      console.log(resp.lineTypeIntelligence);
+      if (resp.lineTypeIntelligence === "premium" || "sharedCost") {
         throw new Error("We do not support premium phone numbers for 2FA");
       }
     }
@@ -59,7 +61,10 @@ app.post("/start-verify", async (req, res) => {
         locale,
       });
     console.log(verification);
-    res.json({ success: true, attempts: verification.sendCodeAttempts.length });
+    res.json({
+      success: true,
+      attempts: verification.sendCodeAttempts.length,
+    });
   } catch (error) {
     console.error(error);
     res.sendStatus(400);

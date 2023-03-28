@@ -39,6 +39,13 @@ app.get("/2fa", (req, res) => {
   res.sendFile(path.join(__dirname, "/public/2fa.html"));
 });
 
+app.get("/secrets", (req, res) => {
+  console.log(req.session);
+  if (req.session.loggedIn) {
+    res.send("Here are all the secrets");
+  } else res.sendStatus(401);
+});
+
 app.post("/start-verify", async (req, res) => {
   const { channel, locale, to } = req.body;
   try {
@@ -58,11 +65,11 @@ app.post("/start-verify", async (req, res) => {
         channel,
         locale,
       });
-    console.log(verification);
     res.json({ success: true, attempts: verification.sendCodeAttempts.length });
   } catch (error) {
     console.error(error);
-    res.sendStatus(400);
+    res.statusCode = error.status;
+    res.send(error);
   }
 });
 
@@ -77,6 +84,8 @@ app.post("/check-verify", async (req, res) => {
       });
 
     if (check.status === "approved") {
+      req.session.loggedIn = true;
+      console.log(req.session);
       res.json({ success: true, message: "Verification Success" });
     } else {
       res.json({

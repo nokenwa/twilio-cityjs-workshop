@@ -48,8 +48,8 @@ app.post("/start-verify", async (req, res) => {
       const resp = await twilio.lookups.v2
         .phoneNumbers(to)
         .fetch({ fields: "line_type_intelligence" });
-      console.log(resp.lineTypeIntelligence);
-      if (resp.lineTypeIntelligence === "premium" || "sharedCost") {
+      console.log(resp);
+      if (resp.lineTypeIntelligence === ("premium" || "sharedCost")) {
         throw new Error("We do not support premium phone numbers for 2FA");
       }
     }
@@ -60,14 +60,11 @@ app.post("/start-verify", async (req, res) => {
         channel,
         locale,
       });
-    console.log(verification);
-    res.json({
-      success: true,
-      attempts: verification.sendCodeAttempts.length,
-    });
+    res.json({ success: true, attempts: verification.sendCodeAttempts.length });
   } catch (error) {
     console.error(error);
-    res.sendStatus(400);
+    res.statusCode = error.status;
+    res.send(error);
   }
 });
 
@@ -82,6 +79,8 @@ app.post("/check-verify", async (req, res) => {
       });
 
     if (check.status === "approved") {
+      req.session.loggedIn = true;
+      console.log(req.session);
       res.json({ success: true, message: "Verification Success" });
     } else {
       res.json({

@@ -219,7 +219,7 @@
 
     async function sendOtp(event) {
       event.preventDefault();
-
+      console.log("sendingOtp");
       const locale = document.getElementById("select-language").value;
       const channel = selectedChannel();
 
@@ -244,7 +244,7 @@
         });
 
         const json = await response.json();
-
+        console.log(json);
         if (response.status == 429) {
           clearStatus();
           modal.style.display = "block";
